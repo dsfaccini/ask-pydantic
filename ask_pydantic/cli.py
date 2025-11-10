@@ -110,7 +110,7 @@ Examples:
     try:
         print('🥾 Booting agent (gently)...')
         import pydantic_ai
-        from ask_pydantic.agent import get_model_name
+        from ask_pydantic._agent import get_model_name
 
         # Create a temporary agent just to validate the API key
         _ = pydantic_ai.Agent(get_model_name())
@@ -134,7 +134,7 @@ Examples:
 
     # Import the full agent (after docs are ready)
     try:
-        from ask_pydantic.agent import agent
+        from ask_pydantic._agent import agent
     except Exception as e:
         print(f'\n❌ Failed to load agent: {e}')
         sys.exit(1)
