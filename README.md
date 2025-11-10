@@ -1,6 +1,6 @@
 # ask-pydantic
 
-A CLI tool to ask questions about Pydantic AI and Logfire documentation using AI-powered search.
+A python library and CLI tool to ask questions about Pydantic AI and Logfire documentation using AI-powered search.
 
 ```bash
 # run with uvx
