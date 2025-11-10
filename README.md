@@ -8,6 +8,10 @@ uvx ask-pydantic
 uvx ask-pydantic "How do I create an agent?"
 ```
 
+
+https://github.com/user-attachments/assets/f2ab1dfc-f90c-4311-a04c-c41b82eb3052
+
+
 ## Installation
 
 ```bash
