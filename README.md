@@ -2,13 +2,16 @@
 
 A CLI tool to ask questions about Pydantic AI and Logfire documentation using AI-powered search.
 
+```bash
+# run with uvx
+uvx ask-pydantic
+uvx ask-pydantic "How do I create an agent?"
+```
+
 ## Installation
 
 ```bash
-# Install with uv (recommended)
-uvx ask-pydantic "How do I create an agent?"
-
-# Or install globally
+# install globally
 uv tool install ask-pydantic
 ```
 

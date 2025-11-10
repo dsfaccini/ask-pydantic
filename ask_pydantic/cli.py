@@ -6,8 +6,11 @@ import argparse
 import asyncio
 import os
 import sys
+from importlib.metadata import version
 
-from ask_pydantic.data import prompt_and_clone_docs
+import questionary
+
+__version__ = version('ask-pydantic')
 
 
 def check_api_keys() -> tuple[bool, str | None]:
@@ -50,7 +53,7 @@ def print_api_key_error():
         print(f'    export {key}="your-key-here"')
         print()
 
-    print('💡 Tip: Add your API key to a .env file and run:')
+    print('💡 Tip: Add one of the above to a .env file and run:')
     print('   source .env && ask-pydantic "your question"')
 
 
@@ -71,27 +74,65 @@ Examples:
         nargs='?',
         help='Your question about Pydantic AI or Logfire',
     )
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=f'ask-pydantic {__version__}',
+    )
 
     args = parser.parse_args()
 
-    # Show help if no question provided
+    # Show version, help, and prompt for question if none provided
     if not args.question:
+        print(f'ask-pydantic v{__version__}')
+        print('Ask questions about Pydantic AI and Logfire documentation\n')
         parser.print_help()
-        sys.exit(0)
+        print()
 
-    # Check for API keys
+        # Prompt for question interactively
+        question = questionary.text(
+            'Enter your question (or press Ctrl+C to exit):',
+            validate=lambda text: len(text) > 0 or 'Please enter a question',
+        ).ask()
+
+        if not question:
+            sys.exit(0)
+
+        args.question = question
+
+    # Check for API keys early with a test agent to fail fast
     has_key, provider = check_api_keys()
     if not has_key:
         print_api_key_error()
         sys.exit(1)
 
-    print(f'🔑 Using {provider}')
+    # Validate API keys work by creating a test agent
+    try:
+        print('🥾 Booting agent (gently)...')
+        import pydantic_ai
+        from ask_pydantic.agent import get_model_name
 
-    # Check if docs exist, prompt to download if needed
-    if not prompt_and_clone_docs():
+        # Create a temporary agent just to validate the API key
+        _ = pydantic_ai.Agent(get_model_name())
+    except Exception as e:
+        print(f'\n❌ Failed to initialize agent: {e}')
+        print('\nPlease check that your API key is valid.')
         sys.exit(1)
 
-    # Import agent here (after docs are ready) to avoid initialization errors
+    print(f'🔑 Using {provider}')
+
+    # Check if docs exist, prompt to download if needed (only when actually running)
+    print('\n📚 Checking documentation...')
+    try:
+        from ask_pydantic.data import prompt_and_clone_docs
+
+        if not prompt_and_clone_docs():
+            sys.exit(1)
+    except Exception as e:
+        print(f'\n❌ Failed to check documentation: {e}')
+        sys.exit(1)
+
+    # Import the full agent (after docs are ready)
     try:
         from ask_pydantic.agent import agent
     except Exception as e:
