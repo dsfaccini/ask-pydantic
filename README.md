@@ -6,8 +6,17 @@ A CLI tool to ask questions about Pydantic AI and Logfire documentation using AI
 # run with uvx
 uvx ask-pydantic
 uvx ask-pydantic "How do I create an agent?"
+
+# or use in your code
+uv add ask-pydantic
 ```
 
+```python
+from ask_pydantic import agent
+
+result = agent.run_sync("How do I create an agent?")
+print(result.output)
+```
 
 https://github.com/user-attachments/assets/f2ab1dfc-f90c-4311-a04c-c41b82eb3052
 
